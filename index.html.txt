@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SRI TOUR - Explore the World</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf8f5;
+      --bg-dark: #f0ebe3;
+      --fg: #1a2f38;
+      --fg-muted: #5a6d75;
+      --accent: #d4654a;
+      --accent-hover: #c4553a;
+      --teal: #1a5f5a;
+      --teal-light: #2a7a74;
+      --card: #ffffff;
+      --border: #e8e2d9;
+      --gold: #c9a962;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--fg);
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--teal);
+      border-radius: 4px;
+    }
+
+    /* Noise texture overlay */
+    .noise-bg {
+      position: relative;
+    }
+
+    .noise-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Header styles */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1rem 2rem;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .header.scrolled {
+      background: rgba(250, 248, 245, 0.95);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+      padding: 0.75rem 2rem;
+    }
+
+    .nav-link {
+      position: relative;
+      color: var(--fg);
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .nav-link:hover {
+      color: var(--accent);
+    }
+
+    /* Hero section */
+    .hero {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #1a5f5a 0%, #0d3d3a 50%, #1a2f38 100%);
+    }
+
+    .hero-pattern {
+      position: absolute;
+      inset: 0;
+      opacity: 0.08;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .hero-orb-1 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(212, 101, 74, 0.3) 0%, transparent 70%);
+      top: -200px;
+      right: -100px;
+      animation-delay: 0s;
+    }
+
+    .hero-orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(201, 169, 98, 0.2) 0%, transparent 70%);
+      bottom: -100px;
+      left: -100px;
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: #ffffff;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title span {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 500px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--accent);
+      color: white;
+      padding: 1rem 2rem;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(212, 101, 74, 0.4);
+    }
+
+    .btn-primary:hover::before {
+      opacity: 1;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: transparent;
+      color: var(--teal);
+      padding: 1rem 2rem;
+      font-weight: 600;
+      border: 2px solid var(--teal);
+      border-radius: 60px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--teal);
+      color: white;
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(10px); }
+    }
+
+    /* Section styles */
+    .section {
+      padding: 6rem 0;
+      position: relative;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+      font-size: 1.1rem;
+      color: var(--fg-muted);
+      max-width: 600px;
+    }
+
+    .accent-line {
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      border-radius: 2px;
+      margin-bottom: 1.5rem;
+    }
+
+    /* About section */
+    .about-image-wrapper {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .about-image-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(26, 95, 90, 0.1) 0%, transparent 100%);
+      z-index: 1;
+    }
+
+    .about-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .about-image-wrapper:hover img {
+      transform: scale(1.05);
+    }
+
+    .about-decoration {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border: 3px solid var(--gold);
+      border-radius: 20px;
+      bottom: -20px;
+      right: -20px;
+      z-index: -1;
+      opacity: 0.5;
+    }
+
+    .stat-card {
+      background: var(--teal);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    /* Destination cards */
+    .destination-card {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      background: var(--card);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .destination-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .destination-card img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .destination-card:hover img {
+      transform: scale(1.1);
+    }
+
+    .destination-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(26, 47, 56, 0.9) 100%);
+      pointer-events: none;
+    }
+
+    .destination-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1.5rem;
+      color: white;
+      transform: translateY(20px);
+      transition: transform 0.4s;
+    }
+
+    .destination-card:hover .destination-content {
+      transform: translateY(0);
+    }
+
+    .destination-tag {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .destination-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .destination-desc {
+      font-size: 0.875rem;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.4s 0.1s;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .destination-card:hover .destination-desc {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .btn-view {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      color: var(--gold);
+      font-weight: 600;
+      font-size: 0.875rem;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.4s 0.15s;
+    }
+
+    .destination-card:hover .btn-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Pricing cards */
+    .pricing-card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid var(--border);
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+    }
+
+    .pricing-card.featured {
+      border-color: var(--teal);
+      background: linear-gradient(180deg, var(--teal) 0%, #164844 100%);
+      color: white;
+      transform: scale(1.05);
+    }
+
+    .pricing-card.featured:hover {
+      transform: scale(1.05) translateY(-10px);
+    }
+
+    .featured-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--gold);
+      color: var(--fg);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .pricing-name {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      opacity: 0.8;
+    }
+
+    .pricing-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .pricing-price span {
+      font-size: 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      opacity: 0.7;
+    }
+
+    .pricing-desc {
+      font-size: 0.875rem;
+      opacity: 0.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .pricing-features {
+      list-style: none;
+      margin-bottom: 2rem;
+    }
+
+    .pricing-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      font-size: 0.95rem;
+    }
+
+    .pricing-card.featured .pricing-features li {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .pricing-features li svg {
+      width: 20px;
+      height: 20px;
+      color: var(--teal);
+      flex-shrink: 0;
+    }
+
+    .pricing-card.featured .pricing-features li svg {
+      color: var(--gold);
+    }
+
+    .btn-plan {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 60px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+
+    .btn-plan.outline {
+      background: transparent;
+      border: 2px solid var(--teal);
+      color: var(--teal);
+    }
+
+    .btn-plan.outline:hover {
+      background: var(--teal);
+      color: white;
+    }
+
+    .btn-plan.solid {
+      background: var(--gold);
+      color: var(--fg);
+    }
+
+    .btn-plan.solid:hover {
+      background: white;
+    }
+
+    /* Gallery */
+    .gallery-item {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      aspect-ratio: 1;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.15);
+    }
+
+    .gallery-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(26, 95, 90, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .gallery-item:hover .gallery-overlay {
+      opacity: 1;
+    }
+
+    .gallery-overlay svg {
+      color: white;
+      width: 40px;
+      height: 40px;
+      transform: scale(0.8);
+      transition: transform 0.3s;
+    }
+
+    .gallery-item:hover .gallery-overlay svg {
+      transform: scale(1);
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .lightbox.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      background: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s;
+    }
+
+    .lightbox-close:hover {
+      transform: rotate(90deg);
+    }
+
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    .lightbox-nav:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .lightbox-prev {
+      left: 2rem;
+    }
+
+    .lightbox-next {
+      right: 2rem;
+    }
+
+    /* Contact section */
+    .contact-section {
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg-dark) 100%);
+    }
+
+    .contact-card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--fg);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.3s;
+      background: var(--bg);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(26, 95, 90, 0.1);
+    }
+
+    .form-input.error {
+      border-color: #e74c3c;
+    }
+
+    .form-input.success {
+      border-color: #27ae60;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .form-submit {
+      width: 100%;
+      padding: 1.25rem;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 60px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .form-submit:hover {
+      background: var(--teal-light);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(26, 95, 90, 0.3);
+    }
+
+    .form-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .map-wrapper {
+      border-radius: 20px;
+      overflow: hidden;
+      height: 100%;
+      min-height: 400px;
+    }
+
+    .map-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--fg);
+      color: white;
+      padding: 4rem 0 2rem;
+    }
+
+    .footer-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .footer-brand span {
+      color: var(--gold);
+    }
+
+    .footer-text {
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-title {
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: white;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: var(--gold);
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .social-link {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: all 0.3s;
+    }
+
+    .social-link:hover {
+      background: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 3rem;
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.875rem;
+    }
+
+    /* Mobile menu */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 300px;
+      max-width: 80%;
+      background: var(--card);
+      z-index: 1001;
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 2rem;
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .mobile-menu.active {
+      transform: translateX(0);
+    }
+
+    .mobile-menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .mobile-menu-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .mobile-nav-link {
+      display: block;
+      padding: 1rem 0;
+      color: var(--fg);
+      font-weight: 500;
+      font-size: 1.1rem;
+      border-bottom: 1px solid var(--border);
+      transition: color 0.3s;
+    }
+
+    .mobile-nav-link:hover {
+      color: var(--accent);
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 1002;
+      padding: 10px;
+    }
+
+    .hamburger span {
+      width: 25px;
+      height: 2px;
+      background: var(--fg);
+      transition: all 0.3s;
+    }
+
+    .header.scrolled .hamburger span,
+    .header:not(.scrolled) .hamburger.scrolled span {
+      background: var(--fg);
+    }
+
+    .header:not(.scrolled) .hamburger span {
+      background: white;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+    .reveal-delay-6 { transition-delay: 0.6s; }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      
+      html {
+        scroll-behavior: auto;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .desktop-nav {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .pricing-card.featured {
+        transform: none;
+      }
+
+      .pricing-card.featured:hover {
+        transform: translateY(-10px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .section {
+        padding: 4rem 0;
+      }
+
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+
+      .about-decoration {
+        display: none;
+      }
+
+      .contact-card {
+        padding: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header {
+        padding: 1rem;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <a href="#" class="text-2xl font-bold text-white" style="font-family: 'Playfair Display', serif;">
+        SRI <span style="color: var(--gold);">TOUR</span>
+      </a>
+
+      <nav class="desktop-nav flex items-center gap-8">
+        <a href="#home" class="nav-link">Home</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#destinations" class="nav-link">Destinations</a>
+        <a href="#packages" class="nav-link">Packages</a>
+        <a href="#gallery" class="nav-link">Gallery</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
+
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu-overlay" id="mobileOverlay"></div>
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="#home" class="mobile-nav-link">Home</a>
+    <a href="#about" class="mobile-nav-link">About</a>
+    <a href="#destinations" class="mobile-nav-link">Destinations</a>
+    <a href="#packages" class="mobile-nav-link">Packages</a>
+    <a href="#gallery" class="mobile-nav-link">Gallery</a>
+    <a href="#contact" class="mobile-nav-link">Contact</a>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-pattern"></div>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+
+    <div class="hero-content max-w-7xl mx-auto px-6">
+      <div class="max-w-2xl">
+        <h1 class="hero-title">
+          Explore the World with <span>SRI TOUR</span>
+        </h1>
+        <p class="hero-subtitle">
+          Discover breathtaking destinations, create unforgettable memories, and embark on extraordinary journeys. Your adventure begins here.
+        </p>
+        <button class="btn-primary">
+          Book Your Journey
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="scroll-indicator">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" opacity="0.7">
+        <path d="M12 5v14M19 12l-7 7-7-7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="section noise-bg" id="about">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="reveal">
+          <div class="accent-line"></div>
+          <h2 class="section-title">Crafting Unforgettable Travel Experiences</h2>
+          <p class="section-subtitle mb-6">
+            Since 2010, SRI TOUR has been transforming travel dreams into reality. We believe every journey should be as unique as the traveler.
+          </p>
+          <p class="text-gray-600 mb-8 leading-relaxed">
+            Our team of expert travel consultants works tirelessly to curate personalized itineraries that capture the essence of each destination. From serene beaches to majestic mountains, from cultural expeditions to adventure trails – we handle every detail so you can focus on making memories.
+          </p>
+
+          <div class="grid grid-cols-3 gap-4">
+            <div class="stat-card">
+              <div class="stat-number">15+</div>
+              <div class="text-sm opacity-80">Years Experience</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">50K+</div>
+              <div class="text-sm opacity-80">Happy Travelers</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">120+</div>
+              <div class="text-sm opacity-80">Destinations</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal reveal-delay-2">
+          <div class="about-image-wrapper relative" style="height: 500px;">
+            <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&q=80" alt="Travel Adventure">
+            <div class="about-decoration"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Destinations Section -->
+  <section class="section noise-bg" id="destinations" style="background: var(--bg-dark);">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12 reveal">
+        <div class="accent-line mx-auto"></div>
+        <h2 class="section-title">Popular Destinations</h2>
+        <p class="section-subtitle mx-auto">
+          Explore our handpicked destinations that promise extraordinary experiences and lasting memories.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="destinationsGrid">
+        <!-- Destinations will be rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Packages Section -->
+  <section class="section noise-bg" id="packages">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12 reveal">
+        <div class="accent-line mx-auto"></div>
+        <h2 class="section-title">Travel Packages</h2>
+        <p class="section-subtitle mx-auto">
+          Choose from our carefully crafted packages designed to suit every traveler's needs and budget.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8 items-start" id="packagesGrid">
+        <!-- Packages will be rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section class="section noise-bg" id="gallery" style="background: var(--bg-dark);">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12 reveal">
+        <div class="accent-line mx-auto"></div>
+        <h2 class="section-title">Travel Gallery</h2>
+        <p class="section-subtitle mx-auto">
+          A visual journey through some of our most cherished moments and stunning destinations.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="galleryGrid">
+        <!-- Gallery items will be rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" aria-label="Close lightbox">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+    <button class="lightbox-nav lightbox-prev" aria-label="Previous image">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+    <img src="" alt="Gallery image" id="lightboxImage">
+    <button class="lightbox-nav lightbox-next" aria-label="Next image">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Contact Section -->
+  <section class="section contact-section" id="contact">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12 reveal">
+        <div class="accent-line mx-auto"></div>
+        <h2 class="section-title">Get in Touch</h2>
+        <p class="section-subtitle mx-auto">
+          Ready to start your adventure? Contact us today and let's plan your perfect journey.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8">
+        <div class="contact-card reveal">
+          <form id="contactForm" novalidate>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label" for="name">Full Name</label>
+                <input type="text" id="name" class="form-input" placeholder="John Doe" required>
+                <p class="error-message" id="nameError">Please enter your name</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input type="email" id="email" class="form-input" placeholder="john@example.com" required>
+                <p class="error-message" id="emailError">Please enter a valid email</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="phone">Phone Number</label>
+              <input type="tel" id="phone" class="form-input" placeholder="+1 234 567 8900" required>
+              <p class="error-message" id="phoneError">Please enter your phone number</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="message">Your Message</label>
+              <textarea id="message" class="form-input" rows="5" placeholder="Tell us about your dream destination..." required></textarea>
+              <p class="error-message" id="messageError">Please enter your message</p>
+            </div>
+            <button type="submit" class="form-submit" id="submitBtn">
+              Send Message
+            </button>
+          </form>
+        </div>
+
+        <div class="map-wrapper reveal reveal-delay-2">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387193.30596073366!2d-74.25986548248684!3d40.69714941932609!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2s!4v1635959843794!5m2!1sen!2s"
+            allowfullscreen=""
+            loading="lazy"
+            title="SRI TOUR Location">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div>
+          <div class="footer-brand">SRI <span>TOUR</span></div>
+          <p class="footer-text">
+            Your trusted partner for extraordinary travel experiences. Making dreams come true since 2010.
+          </p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Facebook">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Twitter">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="YouTube">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/>
+                <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="white"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#destinations">Destinations</a></li>
+            <li><a href="#packages">Packages</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Top Destinations</h4>
+          <ul class="footer-links">
+            <li><a href="#">Bali, Indonesia</a></li>
+            <li><a href="#">Swiss Alps</a></li>
+            <li><a href="#">Maldives</a></li>
+            <li><a href="#">Santorini, Greece</a></li>
+            <li><a href="#">Kyoto, Japan</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Contact Info</h4>
+          <ul class="footer-links">
+            <li style="display: flex; align-items: center; gap: 0.75rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              123 Travel Street, NY 10001
+            </li>
+            <li style="display: flex; align-items: center; gap: 0.75rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              +1 234 567 8900
+            </li>
+            <li style="display: flex; align-items: center; gap: 0.75rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              info@sritour.com
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2024 SRI TOUR. All rights reserved.</p>
+        <p>Designed with passion for travelers</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Data
+    const destinations = [
+      {
+        id: 1,
+        name: "Bali, Indonesia",
+        tag: "Tropical Paradise",
+        desc: "Experience the magic of ancient temples, lush rice terraces, and pristine beaches.",
+        image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80"
+      },
+      {
+        id: 2,
+        name: "Swiss Alps",
+        tag: "Mountain Adventure",
+        desc: "Breathtaking peaks, charming villages, and world-class skiing await you.",
+        image: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=600&q=80"
+      },
+      {
+        id: 3,
+        name: "Maldives",
+        tag: "Luxury Escape",
+        desc: "Crystal-clear waters, overwater villas, and unparalleled marine life.",
+        image: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&q=80"
+      },
+      {
+        id: 4,
+        name: "Santorini, Greece",
+        tag: "Romantic Getaway",
+        desc: "Iconic sunsets, white-washed buildings, and Mediterranean charm.",
+        image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&q=80"
+      },
+      {
+        id: 5,
+        name: "Kyoto, Japan",
+        tag: "Cultural Heritage",
+        desc: "Ancient temples, traditional gardens, and timeless Japanese culture.",
+        image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&q=80"
+      },
+      {
+        id: 6,
+        name: "Patagonia, Argentina",
+        tag: "Wilderness Trek",
+        desc: "Untamed landscapes, glaciers, and some of Earth's most dramatic scenery.",
+        image: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=600&q=80"
+      }
+    ];
+
+    const packages = [
+      {
+        name: "Basic Explorer",
+        price: 599,
+        period: "per person",
+        desc: "Perfect for budget-conscious travelers seeking authentic experiences.",
+        features: [
+          "5-day guided tour",
+          "3-star accommodations",
+          "Daily breakfast included",
+          "Group transportation",
+          "Travel insurance",
+          "24/7 support hotline"
+        ],
+        featured: false
+      },
+      {
+        name: "Premium Voyager",
+        price: 1299,
+        period: "per person",
+        desc: "Our most popular choice for balanced comfort and adventure.",
+        features: [
+          "10-day guided tour",
+          "4-star boutique hotels",
+          "All meals included",
+          "Private transportation",
+          "Exclusive experiences",
+          "Personal travel guide",
+          "Airport transfers",
+          "Travel insurance"
+        ],
+        featured: true
+      },
+      {
+        name: "Luxury Elite",
+        price: 2499,
+        period: "per person",
+        desc: "Ultimate luxury with bespoke experiences and premium services.",
+        features: [
+          "14-day custom journey",
+          "5-star luxury resorts",
+          "Fine dining experiences",
+          "Private chauffeur",
+          "VIP airport services",
+          "Personal concierge",
+          "Spa & wellness package",
+          "Exclusive access passes"
+        ],
+        featured: false
+      }
+    ];
+
+    const galleryImages = [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80",
+      "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80",
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=400&q=80",
+      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&q=80",
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80",
+      "https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=400&q=80",
+      "https://images.unsplash.com/photo-1488085061387-422e29b40080?w=400&q=80",
+      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&q=80"
+    ];
+
+    // DOM Elements
+    const header = document.getElementById('header');
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+    const destinationsGrid = document.getElementById('destinationsGrid');
+    const packagesGrid = document.getElementById('packagesGrid');
+    const galleryGrid = document.getElementById('galleryGrid');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightboxImage');
+    const contactForm = document.getElementById('contactForm');
+
+    let currentImageIndex = 0;
+
+    // Render Destinations
+    function renderDestinations() {
+      destinationsGrid.innerHTML = destinations.map((dest, index) => `
+        <div class="destination-card reveal reveal-delay-${index + 1}">
+          <img src="${dest.image}" alt="${dest.name}" loading="lazy">
+          <div class="destination-overlay"></div>
+          <div class="destination-content">
+            <span class="destination-tag">${dest.tag}</span>
+            <h3 class="destination-name">${dest.name}</h3>
+            <p class="destination-desc">${dest.desc}</p>
+            <div class="btn-view">
+              View Details
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Render Packages
+    function renderPackages() {
+      packagesGrid.innerHTML = packages.map((pkg, index) => `
+        <div class="pricing-card ${pkg.featured ? 'featured' : ''} reveal reveal-delay-${index + 1}">
+          ${pkg.featured ? '<span class="featured-badge">MOST POPULAR</span>' : ''}
+          <div class="pricing-name">${pkg.name}</div>
+          <div class="pricing-price">$${pkg.price}<span>/${pkg.period}</span></div>
+          <p class="pricing-desc">${pkg.desc}</p>
+          <ul class="pricing-features">
+            ${pkg.features.map(feature => `
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                ${feature}
+              </li>
+            `).join('')}
+          </ul>
+          <button class="btn-plan ${pkg.featured ? 'solid' : 'outline'}">
+            Choose Plan
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // Render Gallery
+    function renderGallery() {
+      galleryGrid.innerHTML = galleryImages.map((img, index) => `
+        <div class="gallery-item reveal reveal-delay-${(index % 6) + 1}" data-index="${index}">
+          <img src="${img}" alt="Gallery image ${index + 1}" loading="lazy">
+          <div class="gallery-overlay">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="M21 21l-4.35-4.35"/>
+              <path d="M11 8v6M8 11h6"/>
+            </svg>
+          </div>
+        </div>
+      `).join('');
+
+      // Add click listeners
+      document.querySelectorAll('.gallery-item').forEach(item => {
+        item.addEventListener('click', () => {
+          currentImageIndex = parseInt(item.dataset.index);
+          openLightbox();
+        });
+      });
+    }
+
+    // Lightbox functions
+    function openLightbox() {
+      lightboxImage.src = galleryImages[currentImageIndex].replace('w=400', 'w=1200');
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function nextImage() {
+      currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+      lightboxImage.src = galleryImages[currentImageIndex].replace('w=400', 'w=1200');
+    }
+
+    function prevImage() {
+      currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+      lightboxImage.src = galleryImages[currentImageIndex].replace('w=400', 'w=1200');
+    }
+
+    // Lightbox event listeners
+    lightbox.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+    lightbox.querySelector('.lightbox-next').addEventListener('click', nextImage);
+    lightbox.querySelector('.lightbox-prev').addEventListener('click', prevImage);
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    // Keyboard navigation for lightbox
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('active')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') nextImage();
+      if (e.key === 'ArrowLeft') prevImage();
+    });
+
+    // Mobile menu
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+      mobileOverlay.classList.toggle('active');
+    });
+
+    mobileOverlay.addEventListener('click', () => {
+      hamburger.classList.remove('active');
+      mobileMenu.classList.remove('active');
+      mobileOverlay.classList.remove('active');
+    });
+
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        mobileOverlay.classList.remove('active');
+      });
+    });
+
+    // Header scroll effect
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.pageYOffset;
+      
+      if (currentScroll > 100) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+      
+      lastScroll = currentScroll;
+    });
+
+    // Scroll reveal animation
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    function initRevealAnimations() {
+      document.querySelectorAll('.reveal').forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    // Form validation
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    function showError(inputId, errorId) {
+      const input = document.getElementById(inputId);
+      const error = document.getElementById(errorId);
+      input.classList.add('error');
+      input.classList.remove('success');
+      error.classList.add('show');
+    }
+
+    function showSuccess(inputId, errorId) {
+      const input = document.getElementById(inputId);
+      const error = document.getElementById(errorId);
+      input.classList.remove('error');
+      input.classList.add('success');
+      error.classList.remove('show');
+    }
+
+    function clearValidation(inputId, errorId) {
+      const input = document.getElementById(inputId);
+      const error = document.getElementById(errorId);
+      input.classList.remove('error', 'success');
+      error.classList.remove('show');
+    }
+
+    // Real-time validation
+    document.getElementById('name').addEventListener('input', function() {
+      if (this.value.trim().length >= 2) {
+        showSuccess('name', 'nameError');
+      } else {
+        clearValidation('name', 'nameError');
+      }
+    });
+
+    document.getElementById('email').addEventListener('input', function() {
+      if (validateEmail(this.value)) {
+        showSuccess('email', 'emailError');
+      } else {
+        clearValidation('email', 'emailError');
+      }
+    });
+
+    document.getElementById('phone').addEventListener('input', function() {
+      if (this.value.trim().length >= 10) {
+        showSuccess('phone', 'phoneError');
+      } else {
+        clearValidation('phone', 'phoneError');
+      }
+    });
+
+    document.getElementById('message').addEventListener('input', function() {
+      if (this.value.trim().length >= 10) {
+        showSuccess('message', 'messageError');
+      } else {
+        clearValidation('message', 'messageError');
+      }
+    });
+
+    // Form submission
+    contactForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      let isValid = true;
+      
+      // Validate name
+      const name = document.getElementById('name').value.trim();
+      if (name.length < 2) {
+        showError('name', 'nameError');
+        isValid = false;
+      } else {
+        showSuccess('name', 'nameError');
+      }
+      
+      // Validate email
+      const email = document.getElementById('email').value.trim();
+      if (!validateEmail(email)) {
+        showError('email', 'emailError');
+        isValid = false;
+      } else {
+        showSuccess('email', 'emailError');
+      }
+      
+      // Validate phone
+      const phone = document.getElementById('phone').value.trim();
+      if (phone.length < 10) {
+        showError('phone', 'phoneError');
+        isValid = false;
+      } else {
+        showSuccess('phone', 'phoneError');
+      }
+      
+      // Validate message
+      const message = document.getElementById('message').value.trim();
+      if (message.length < 10) {
+        showError('message', 'messageError');
+        isValid = false;
+      } else {
+        showSuccess('message', 'messageError');
+      }
+      
+      if (isValid) {
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+        
+        // Simulate form submission
+        setTimeout(() => {
+          submitBtn.textContent = 'Message Sent!';
+          submitBtn.style.background = '#27ae60';
+          
+          // Reset form
+          setTimeout(() => {
+            contactForm.reset();
+            document.querySelectorAll('.form-input').forEach(input => {
+              input.classList.remove('success', 'error');
+            });
+            submitBtn.textContent = 'Send Message';
+            submitBtn.style.background = '';
+            submitBtn.disabled = false;
+          }, 2000);
+        }, 1500);
+      }
+    });
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const headerHeight = header.offsetHeight;
+          const targetPosition = target.offsetTop - headerHeight;
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // Initialize
+    function init() {
+      renderDestinations();
+      renderPackages();
+      renderGallery();
+      
+      // Delay to allow DOM to settle
+      setTimeout(() => {
+        initRevealAnimations();
+      }, 100);
+    }
+
+    // Run initialization
+    init();
+  </script>
+</body>
+</html>
